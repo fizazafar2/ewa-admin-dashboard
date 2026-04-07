@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EWA | Strategic Analytics</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --sidebar-bg: #000000;
+            --main-bg: #f8f8f8;
+            --text-gray-light: #b0b0b0;
+            --nav-item-active-bg: #ffffff;
+            --nav-item-active-text: #000000;
+            --transition-smooth: all 0.5s cubic-bezier(0.3, 1.5, 0.5, 1); 
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--main-bg); margin: 0; overflow-x: hidden; color: #000000; }
+        #wrapper { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar (FIXED: EXACT MATCH TO CUSTOMER PAGE) --- */
+        #sidebar-wrapper { 
+            min-width: 260px; max-width: 260px; background: var(--sidebar-bg); 
+            color: #ffffff; display: flex; flex-direction: column; 
+            transition: var(--transition-smooth); z-index: 1100;
+        }
+        
+        .sidebar-heading { padding: 2.5rem 1.5rem; text-align: center; }
+        .sidebar-heading h2 { 
+            font-weight: 800; letter-spacing: 4px; margin: 0; font-size: 2rem;
+            background: linear-gradient(to right, #ffffff, #808080);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .sidebar-heading small { display: block; color: var(--text-gray-light); letter-spacing: 2px; font-size: 0.65rem; margin-top: 5px; text-transform: uppercase; }
+        
+        .nav-item { 
+            display: flex; align-items: center; padding: 12px 22px; color: var(--text-gray-light); 
+            text-decoration: none; font-weight: 500; font-size: 0.9rem; margin: 4px 15px; border-radius: 12px; transition: var(--transition-smooth);
+        }
+        .nav-item i { margin-right: 14px; font-size: 1.15rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #ffffff; transform: translateX(5px); }
+        .nav-item.active { background: var(--nav-item-active-bg); color: var(--nav-item-active-text); font-weight: 600; }
+        
+        .btn-support { background: #ffffff; color: #000000; border: none; font-weight: 700; border-radius: 10px; padding: 10px; text-transform: uppercase; font-size: 0.75rem; }
+
+        /* --- Navbar (FIXED: EXACT MATCH TO CUSTOMER PAGE) --- */
+        #page-content-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .navbar { 
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.9rem 1.8rem;
+        }
+        .user-profile {
+            background: rgba(255, 255, 255, 0.5); padding: 7px 16px;
+            border-radius: 50px; border: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+
+        /* --- Analytics Styling (RESTORED) --- */
+        .stat-box { background: #ffffff; border-radius: 22px; padding: 22px; border: 1px solid rgba(0,0,0,0.03); transition: all 0.4s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .stat-box:hover { transform: translateY(-7px); border-color: #000; }
+        .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #999; font-weight: 700; }
+        .stat-value { font-size: 1.75rem; font-weight: 800; margin: 5px 0; letter-spacing: -0.5px; }
+        .analytics-card { background: #fff; border-radius: 25px; border: 1px solid #eee; padding: 25px; height: 100%; }
+        .card-header-title { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .data-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f8f8f8; font-size: 0.85rem; }
+
+        @media (max-width: 992px) {
+            #sidebar-wrapper { position: fixed; left: -260px; height: 100vh; }
+            #wrapper.toggled #sidebar-wrapper { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <h2>EWA</h2>
+            <small>BY FIZA ZAFAR</small>
+        </div>
+        <div class="px-2 mt-1 flex-grow-1">
+            <a href="index.html" class="nav-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+            <a href="Product.html" class="nav-item"><i class="bi bi-bag"></i><span>Products</span></a>
+            <a href="Orders.html" class="nav-item"><i class="bi bi-cart"></i><span>Orders</span></a>
+            <a href="Costumers.html" class="nav-item"><i class="bi bi-people"></i><span>Customers</span></a>
+            <a href="Analytics.html" class="nav-item active"><i class="bi bi-graph-up"></i><span>Analytics</span></a>
+            <hr class="mx-4 my-2" style="border-color: rgba(255,255,255,0.1); opacity: 0.5;">
+        </div>
+        <div class="p-4 mt-auto">
+            <button class="btn btn-support w-100">Support</button>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container-fluid px-0">
+                <button class="btn d-lg-none" onclick="document.getElementById('wrapper').classList.toggle('toggled')">
+                    <i class="bi bi-justify-left fs-3 text-dark"></i>
+                </button>
+                <span class="fw-bold text-uppercase d-none d-md-block" style="font-size: 0.85rem; letter-spacing: 1.5px;">Strategic Analytics</span>
+                
+                <div class="ms-auto d-flex align-items-center gap-4">
+                    <i class="bi bi-search text-dark"></i>
+                    <i class="bi bi-bell text-dark"></i>
+                    <div class="user-profile">
+                        <div class="text-end d-none d-sm-block">
+                            <div class="fw-bold small lh-1">Fiza Zafar</div>
+                            <small class="text-muted" style="font-size: 0.65rem;">Managing Director</small>
+                        </div>
+                        <i class="bi bi-person-circle fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+            <div class="row g-4 mb-4">
+                <div class="col-md-3 animate__animated animate__fadeInDown">
+                    <div class="stat-box">
+                        <div class="stat-label">Gross Revenue</div>
+                        <div class="stat-value">Rs. 2,482,500</div>
+                        <div class="text-success fw-bold small"><i class="bi bi-caret-up-fill"></i> 14.2% Growth</div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate__animated animate__fadeInDown" style="animation-delay: 0.1s">
+                    <div class="stat-box">
+                        <div class="stat-label">Net Profit (Post-Tax)</div>
+                        <div class="stat-value">Rs. 848,000</div>
+                        <div class="text-dark fw-bold small">34.1% Margin</div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate__animated animate__fadeInDown" style="animation-delay: 0.2s">
+                    <div class="stat-box">
+                        <div class="stat-label">Marketing Spend</div>
+                        <div class="stat-value">Rs. 320,000</div>
+                        <div class="text-muted fw-bold small">ROAS: 7.7x</div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate__animated animate__fadeInDown" style="animation-delay: 0.3s">
+                    <div class="stat-box">
+                        <div class="stat-label">Pending COD</div>
+                        <div class="stat-value">Rs. 412,900</div>
+                        <div class="text-danger fw-bold small">In-Transit</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8 animate__animated animate__fadeInLeft">
+                    <div class="analytics-card">
+                        <div class="card-header-title"><i class="bi bi-graph-up text-primary"></i> Monthly Revenue Growth</div>
+                        <div style="height: 320px;"><canvas id="growthChart"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 animate__animated animate__fadeInRight">
+                    <div class="analytics-card">
+                        <div class="card-header-title"><i class="bi bi-geo-alt text-danger"></i> Sales by Region (KHI)</div>
+                        <div class="mt-3">
+                            <div class="data-row"><span>DHA & Clifton</span><span class="fw-bold">42%</span></div>
+                            <div class="data-row"><span>Gulshan-e-Iqbal</span><span class="fw-bold">28%</span></div>
+                            <div class="data-row"><span>Bahria Town</span><span class="fw-bold">15%</span></div>
+                            <div class="data-row"><span>Others</span><span class="fw-bold">15%</span></div>
+                        </div>
+                        <div class="mt-4" style="height: 180px;"><canvas id="regionPieChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="analytics-card animate__animated animate__fadeInUp">
+                        <div class="card-header-title"><i class="bi bi-star-fill text-warning"></i> Top Performing Articles</div>
+                        <table class="table table-borderless align-middle mt-2">
+                            <tbody style="font-size: 0.85rem;">
+                                <tr><td>Midnight Pret - Luxury Edition</td><td>142 Sold</td><td class="fw-bold">Rs. 852,000</td></tr>
+                                <tr><td>Classic Lawn '26 (Sapphire)</td><td>98 Sold</td><td class="fw-bold">Rs. 441,000</td></tr>
+                                <tr><td>Ivory Silk Kurta Set</td><td>64 Sold</td><td class="fw-bold">Rs. 320,000</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="analytics-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                        <div class="card-header-title"><i class="bi bi-pie-chart text-success"></i> Retention Rate</div>
+                        <div class="d-flex align-items-center justify-content-between h-75">
+                            <h1 class="fw-800 mb-0">84%</h1>
+                            <div class="w-50" style="height: 120px;"><canvas id="retentionChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    Chart.defaults.font.family = "'Plus Jakarta Sans'";
+    // Line Chart
+    new Chart(document.getElementById('growthChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar'],
+            datasets: [{
+                label: 'Revenue',
+                data: [1800000, 2100000, 2482500],
+                borderColor: '#000',
+                backgroundColor: 'rgba(0,0,0,0.02)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // Pie Chart
+    new Chart(document.getElementById('regionPieChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['DHA', 'Gulshan', 'Bahria', 'Other'],
+            datasets: [{
+                data: [42, 28, 15, 15],
+                backgroundColor: ['#000', '#444', '#888', '#ccc'],
+                borderWidth: 0
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '80%' }
+    });
+
+    // Retention Chart
+    new Chart(document.getElementById('retentionChart'), {  
+        type: 'bar',
+        data: {
+            labels: ['W1', 'W2', 'W3', 'W4'],
+            datasets: [{
+                data: [65, 78, 82, 84],
+                backgroundColor: '#000',
+                borderRadius: 5
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { grid: { display: false } } } }
+    });
+</script>
+</body>
+</html>

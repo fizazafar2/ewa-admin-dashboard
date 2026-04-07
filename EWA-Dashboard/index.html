@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EWA | Final Executive Dashboard</title>
+    
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --sidebar-bg: #000000;
+            --main-bg: #f8f8f8;
+            --text-gray-light: #b0b0b0;
+            --nav-item-active-bg: #ffffff;
+            --nav-item-active-text: #000000;
+            --transition-smooth: all 0.5s cubic-bezier(0.3, 1.5, 0.5, 1); 
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--main-bg); 
+            margin: 0; 
+            overflow-x: hidden; 
+            color: #000000;
+        }
+
+        #wrapper { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar (Original Style) --- */
+        #sidebar-wrapper { 
+            min-width: 260px; 
+            max-width: 260px;
+            background: var(--sidebar-bg); 
+            color: #ffffff; 
+            display: flex; 
+            flex-direction: column; 
+            transition: var(--transition-smooth);
+            z-index: 1100;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-heading { padding: 2.5rem 1.5rem; text-align: center; }
+        .sidebar-heading h2 { 
+            font-weight: 800; letter-spacing: 4px; margin: 0;
+            background: linear-gradient(to right, #ffffff, #808080);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; font-size: 2rem;
+        }
+        .sidebar-heading small {
+            display: block; color: var(--text-gray-light); letter-spacing: 2px; 
+            font-size: 0.65rem; margin-top: 5px; text-transform: uppercase;
+        }
+
+        .nav-item { 
+            display: flex; align-items: center; padding: 12px 22px; 
+            color: var(--text-gray-light); text-decoration: none; 
+            font-weight: 500; font-size: 0.9rem; margin: 4px 15px;
+            border-radius: 12px; transition: var(--transition-smooth);
+        }
+        .nav-item i { margin-right: 14px; font-size: 1.15rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #ffffff; transform: translateX(5px); }
+        .nav-item.active { background: var(--nav-item-active-bg); color: var(--nav-item-active-text); font-weight: 600; }
+
+        /* --- Support Button --- */
+        .btn-support {
+            background: #ffffff; color: #000000; border: none; font-weight: 700;
+            border-radius: 10px; padding: 10px; text-transform: uppercase;
+            font-size: 0.75rem; letter-spacing: 1px; transition: var(--transition-smooth);
+        }
+        .btn-support:hover { background: #000000; color: #ffffff; }
+
+        /* --- Page Content & Navbar --- */
+        #page-content-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        
+        .navbar { 
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.9rem 1.8rem;
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.5); padding: 7px 16px;
+            border-radius: 50px; border: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+
+        /* --- Cards & Metrics --- */
+        .metric-card {
+            background: #fff; padding: 25px; border-radius: 20px; border: 1px solid #efefef;
+            transition: 0.3s;
+        }
+        .metric-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .metric-label { font-size: 0.7rem; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+        .metric-value { font-size: 1.5rem; font-weight: 800; margin: 5px 0; }
+
+        .table-card { background: #fff; border-radius: 20px; border: 1px solid #eee; overflow: hidden; margin-top: 25px; }
+        
+        /* Status Badges */
+        .badge-ewa { padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
+        .st-delivered { background: #e7f6ec; color: #008a2e; }
+        .st-pending { background: #fff4e5; color: #b76e00; }
+        .st-cancelled { background: #fbeae9; color: #bf1d08; }
+
+        @media (max-width: 992px) {
+            #sidebar-wrapper { position: fixed; left: -260px; height: 100vh; }
+            #wrapper.toggled #sidebar-wrapper { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <h2>EWA</h2>
+            <small>BY FIZA ZAFAR</small>
+        </div>
+        <div class="px-2 mt-1 flex-grow-1">
+            <a href="index.html" class="nav-item active"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+            <a href="Product.html" class="nav-item"><i class="bi bi-bag"></i><span>Products</span></a>
+            <a href="Orders.html" class="nav-item"><i class="bi bi-cart"></i><span>Orders</span></a>
+            <a href="Costumers.html" class="nav-item"><i class="bi bi-people"></i><span>Customers</span></a>
+            <a href="Analytics.html" class="nav-item"><i class="bi bi-graph-up"></i><span>Analytics</span></a>
+            <hr class="mx-4 my-2" style="border-color: rgba(255,255,255,0.1); opacity: 0.5;">
+        </div>
+        <div class="p-4 mt-auto">
+            <button class="btn btn-support w-100">Support</button>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container-fluid px-0">
+                <button class="btn d-lg-none" onclick="document.getElementById('wrapper').classList.toggle('toggled')">
+                    <i class="bi bi-justify-left fs-3 text-dark"></i>
+                </button>
+                <span class="fw-bold text-uppercase d-none d-md-block" style="font-size: 0.85rem; letter-spacing: 1.5px;">Control Panel</span>
+                <div class="ms-auto d-flex align-items-center gap-4">
+                    <i class="bi bi-search text-dark" style="cursor:pointer"></i>
+                    <i class="bi bi-bell text-dark" style="cursor:pointer"></i>
+                    <div class="user-profile">
+                        <div class="text-end d-none d-sm-block">
+                            <div class="fw-bold small lh-1">Fiza Zafar</div>
+                            <small class="text-muted" style="font-size: 0.65rem;">Managing Director</small>
+                        </div>
+                        <i class="bi bi-person-circle fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+            <h2 class="fw-bold mb-4 animate__animated animate__fadeInDown">Welcome Back, Fiza! 👋</h2>
+            
+            <div class="row g-4 animate__animated animate__fadeIn">
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Gross Revenue (MTD)</div>
+                        <div class="metric-value">Rs. 4,850,000</div>
+                        <small class="text-success fw-bold">+18% Growth</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Net Profit (Post-Tax)</div>
+                        <div class="metric-value">Rs. 1,420,000</div>
+                        <small class="text-muted">After 18% GST</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Avg. Order Value</div>
+                        <div class="metric-value">Rs. 8,400</div>
+                        <small class="text-primary fw-bold">Premium Segment</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card bg-dark text-white">
+                        <div class="metric-label text-secondary">Pending COD</div>
+                        <div class="metric-value">Rs. 640,200</div>
+                        <small class="text-warning">In-Transit (Karachi)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-2 animate__animated animate__fadeInUp">
+                <div class="col-lg-8">
+                    <div class="metric-card">
+                        <h6 class="fw-bold mb-4">Regional Sales Distribution</h6>
+                        <div style="height: 300px;"><canvas id="salesChart"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="metric-card text-center">
+                        <h6 class="fw-bold mb-4">Product Stock Value</h6>
+                        <div style="height: 230px;"><canvas id="stockChart"></canvas></div>
+                        <h5 class="fw-bold mt-3">Total: Rs. 9.3M</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-card animate__animated animate__fadeInUp">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold m-0">Recent Orders</h6>
+                    <span class="badge bg-dark rounded-pill">Last 25 Transactions</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr style="font-size: 11px; text-transform: uppercase; color: #666;">
+                                <th class="ps-4">ID</th><th>Customer</th><th>Product</th><th>Size</th><th>Payment</th><th class="text-end">Price</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div> </div> </div> <script>
+    window.onload = function() {
+        const data = [
+            ["#1001","Customer 1","Pret Wear","M","COD","5,712","delivered"],
+            ["#1002","Customer 2","Bridal/Formals","L","Online","5,978","delivered"],
+            ["#1003","Customer 3","Lawn Kurti","S","COD","3,938","pending"],
+            ["#1004","Customer 4","Pret Wear","M","Online","3,874","cancelled"],
+            ["#1005","Customer 5","Bridal/Formals","L","COD","3,977","delivered"],
+            ["#1006","Customer 6","Lawn Kurti","S","Online","5,341","pending"],
+            ["#1007","Customer 7","Pret Wear","M","COD","5,985","delivered"],
+            ["#1008","Customer 8","Bridal/Formals","L","Online","3,422","cancelled"],
+            ["#1009","Customer 9","Lawn Kurti","S","COD","4,780","pending"],
+            ["#1010","Customer 10","Pret Wear","M","Online","5,658","delivered"],
+            ["#1011","Customer 11","Bridal/Formals","L","COD","4,424","delivered"],
+            ["#1012","Customer 12","Lawn Kurti","S","Online","5,693","cancelled"],
+            ["#1013","Customer 13","Pret Wear","M","COD","1,047","delivered"],
+            ["#1014","Customer 14","Bridal/Formals","L","Online","5,418","delivered"],
+            ["#1015","Customer 15","Lawn Kurti","S","COD","2,913","pending"],
+            ["#1016","Customer 16","Pret Wear","M","Online","2,424","cancelled"],
+            ["#1017","Customer 17","Bridal/Formals","L","COD","1,526","delivered"],
+            ["#1018","Customer 18","Lawn Kurti","S","Online","3,791","pending"],
+            ["#1019","Customer 19","Pret Wear","M","COD","3,397","delivered"],
+            ["#1020","Customer 20","Bridal/Formals","L","Online","1,650","cancelled"],
+            ["#1021","Customer 21","Lawn Kurti","S","COD","3,730","pending"],
+            ["#1022","Customer 22","Pret Wear","M","Online","4,769","delivered"],
+            ["#1023","Customer 23","Bridal/Formals","L","COD","4,398","delivered"],
+            ["#1024","Customer 24","Lawn Kurti","S","Online","3,679","cancelled"],
+            ["#1025","Customer 25","Pret Wear","M","COD","4,155","delivered"]
+        ];
+
+        const tbody = document.getElementById('orders-tbody');
+        tbody.innerHTML = data.map(row => `
+            <tr>
+                <td class="ps-4 fw-bold text-muted">${row[0]}</td>
+                <td class="fw-bold">${row[1]}</td>
+                <td>${row[2]}</td>
+                <td><span class="badge bg-light text-dark border">${row[3]}</span></td>
+                <td class="small fw-bold">${row[4]}</td>
+                <td class="text-end fw-bold">Rs. ${row[5]}</td>
+                <td><span class="badge-ewa st-${row[6]}">${row[6]}</span></td>
+            </tr>
+        `).join('');
+
+        new Chart(document.getElementById('salesChart'), {
+            type: 'line',
+            data: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5'],
+                datasets: [{ data: [12, 21, 18, 32, 28], borderColor: '#000', fill: true, backgroundColor: 'rgba(0,0,0,0.05)', tension: 0.4 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+
+        new Chart(document.getElementById('stockChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Lawn', 'Pret', 'Bridal'],
+                datasets: [{ data: [45, 30, 25], backgroundColor: ['#000', '#555', '#ccc'], borderWidth: 0 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '80%' }
+        });
+    };
+</script>
+
+</body>
+</html>

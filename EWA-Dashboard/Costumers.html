@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EWA | Customer Registry</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        :root {
+            --sidebar-bg: #000000;
+            --main-bg: #f8f8f8;
+            --text-gray-light: #b0b0b0;
+            --nav-item-active-bg: #ffffff;
+            --nav-item-active-text: #000000;
+            --transition-smooth: all 0.5s cubic-bezier(0.3, 1.5, 0.5, 1); 
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--main-bg); margin: 0; overflow-x: hidden; color: #000000; }
+        #wrapper { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar (STRICTLY MATCHED TO ORDERS PAGE) --- */
+        #sidebar-wrapper { 
+            min-width: 260px; max-width: 260px; background: var(--sidebar-bg); 
+            color: #ffffff; display: flex; flex-direction: column; 
+            transition: var(--transition-smooth); z-index: 1100;
+        }
+        .sidebar-heading { padding: 2.5rem 1.5rem; text-align: center; }
+        .sidebar-heading h2 { 
+            font-weight: 800; letter-spacing: 4px; margin: 0; font-size: 2rem;
+            background: linear-gradient(to right, #ffffff, #808080);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .sidebar-heading small { display: block; color: var(--text-gray-light); letter-spacing: 2px; font-size: 0.65rem; margin-top: 5px; text-transform: uppercase; }
+        
+        .nav-item { 
+            display: flex; align-items: center; padding: 12px 22px; color: var(--text-gray-light); 
+            text-decoration: none; font-weight: 500; font-size: 0.9rem; margin: 4px 15px; border-radius: 12px; transition: var(--transition-smooth);
+        }
+        .nav-item i { margin-right: 14px; font-size: 1.15rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #ffffff; transform: translateX(5px); }
+        .nav-item.active { background: var(--nav-item-active-bg); color: var(--nav-item-active-text); font-weight: 600; }
+        
+        .btn-support { background: #ffffff; color: #000000; border: none; font-weight: 700; border-radius: 10px; padding: 10px; text-transform: uppercase; font-size: 0.75rem; }
+
+        /* --- Navbar (RESTORED TO MATCH ORDERS PAGE) --- */
+        #page-content-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .navbar { 
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.9rem 1.8rem;
+        }
+        .user-profile {
+            background: rgba(255, 255, 255, 0.5); padding: 7px 16px;
+            border-radius: 50px; border: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+
+        /* --- Original Customer Page Elements --- */
+        .stat-box {
+            background: #ffffff; border-radius: 22px; padding: 22px;
+            border: 1px solid rgba(0,0,0,0.03); transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .stat-box:hover { transform: translateY(-7px); border-color: #000; }
+        .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #999; font-weight: 700; }
+        .stat-value { font-size: 2rem; font-weight: 800; margin: 5px 0; }
+        .trend-up { color: #00a341; font-size: 0.75rem; font-weight: 700; }
+
+        .filter-group { display: flex; gap: 8px; margin-bottom: 20px; }
+        .filter-pill { 
+            background: #fff; border: 1px solid #eee; padding: 7px 20px; border-radius: 50px; 
+            font-size: 0.75rem; font-weight: 600; color: #666; transition: 0.3s; cursor: pointer;
+        }
+        .filter-pill.active { background: #000; color: #fff; border-color: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        .customer-card { background: #fff; border-radius: 25px; border: 1px solid #eee; overflow: hidden; }
+        .avatar-circle { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; }
+        
+        .status-pill { padding: 5px 12px; border-radius: 50px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+        .status-vip { background: #000; color: #fff; }
+        .status-regular { background: #f4f4f4; color: #666; }
+        .status-new { background: #e7f6ec; color: #008a2e; }
+
+        .search-input { 
+            background: #f1f1f1; border: 1.5px solid transparent; border-radius: 12px; 
+            padding: 9px 18px; width: 280px; font-size: 0.85rem; transition: 0.3s;
+        }
+        .search-input:focus { background: #fff; border-color: #000; outline: none; }
+
+        .table thead th { font-size: 0.65rem; text-transform: uppercase; color: #999; padding: 18px 20px; background: #fafafa; border-bottom: 1px solid #eee; letter-spacing: 1px; }
+        .table tbody td { padding: 18px 20px; font-size: 0.9rem; border-bottom: 1px solid #f8f8f8; vertical-align: middle; }
+
+        @media (max-width: 992px) {
+            #sidebar-wrapper { position: fixed; left: -260px; height: 100vh; }
+            #wrapper.toggled #sidebar-wrapper { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <h2>EWA</h2>
+            <small>BY FIZA ZAFAR</small>
+        </div>
+        <div class="px-2 mt-1 flex-grow-1">
+            <a href="index.html" class="nav-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+            <a href="Product.html" class="nav-item"><i class="bi bi-bag"></i><span>Products</span></a>
+            <a href="Orders.html" class="nav-item"><i class="bi bi-cart"></i><span>Orders</span></a>
+            <a href="Costumers.html" class="nav-item active"><i class="bi bi-people"></i><span>Customers</span></a>
+            <a href="Analytics.html" class="nav-item"><i class="bi bi-graph-up"></i><span>Analytics</span></a>
+            <hr class="mx-4 my-2" style="border-color: rgba(255,255,255,0.1); opacity: 0.5;">
+
+        </div>
+        <div class="p-4 mt-auto">
+            <button class="btn btn-support w-100">Support</button>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container-fluid px-0">
+                <button class="btn d-lg-none" onclick="document.getElementById('wrapper').classList.toggle('toggled')">
+                    <i class="bi bi-justify-left fs-3 text-dark"></i>
+                </button>
+                <span class="fw-bold text-uppercase d-none d-md-block" style="font-size: 0.85rem; letter-spacing: 1.5px;">Customer Registry</span>
+                
+                <div class="ms-auto d-flex align-items-center gap-4">
+                    <i class="bi bi-search text-dark" style="cursor:pointer"></i>
+                    <i class="bi bi-bell text-dark" style="cursor:pointer"></i>
+                    <div class="user-profile">
+                        <div class="text-end d-none d-sm-block">
+                            <div class="fw-bold small lh-1">Fiza Zafar</div>
+                            <small class="text-muted" style="font-size: 0.65rem;">Managing Director</small>
+                        </div>
+                        <i class="bi bi-person-circle fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+            <div class="row g-4 mb-5">
+                <div class="col-md-3 animate__animated animate__zoomIn" style="animation-delay: 0.1s">
+                    <div class="stat-box">
+                        <div class="stat-label">Total Profiles</div>
+                        <div class="stat-value">45</div>
+                        <div class="trend-up"><i class="bi bi-arrow-up"></i> 12% growth</div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate__animated animate__zoomIn" style="animation-delay: 0.2s">
+                    <div class="stat-box">
+                        <div class="stat-label">VIP Segment</div>
+                        <div class="stat-value">14</div>
+                        <div class="text-dark small fw-bold">Top Tier Buyers</div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate__animated animate__zoomIn" style="animation-delay: 0.3s">
+                    <div class="stat-box">
+                        <div class="stat-label">New This Month</div>
+                        <div class="stat-value">09</div>
+                        <div class="trend-up"><i class="bi bi-plus"></i> Active Leads</div>
+                    </div>
+                </div>
+                <div class="col-md-3 animate__animated animate__zoomIn" style="animation-delay: 0.4s">
+                    <div class="stat-box">
+                        <div class="stat-label">Retention Rate</div>
+                        <div class="stat-value">84%</div>
+                        <div class="text-muted small">Stable Performance</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 animate__animated animate__fadeIn">
+                <div class="filter-group">
+                    <div class="filter-pill active" onclick="applyFilter('all', this)">All</div>
+                    <div class="filter-pill" onclick="applyFilter('vip', this)">VIP</div>
+                    <div class="filter-pill" onclick="applyFilter('regular', this)">Regular</div>
+                    <div class="filter-pill" onclick="applyFilter('new', this)">New</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <input type="text" id="custSearch" class="search-input" placeholder="Search by name or area..." onkeyup="searchTable()">
+                    <button class="btn btn-dark btn-sm px-4 fw-bold rounded-3 text-uppercase" style="font-size: 0.7rem;">Add New</button>
+                </div>
+            </div>
+
+            <div class="customer-card animate__animated animate__fadeInUp">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">User Profile</th>
+                                <th>Contact Outreach</th>
+                                <th>Location (KHI)</th>
+                                <th>Tier Status</th>
+                                <th>Orders</th>
+                                <th class="text-end">LTV Spent</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const customerData = [
+        {name: "Sana Ahmed", email: "sana.a@email.pk", area: "DHA Phase 6", phone: "+92 301 8274412", orders: 15, spent: "95,400", status: "vip"},
+        {name: "Zainab Malik", email: "z.malik@email.pk", area: "Clifton Block 4", phone: "+92 321 9902134", orders: 22, spent: "142,000", status: "vip"},
+        {name: "Hina Pervez", email: "hina.p@email.pk", area: "Gulshan-e-Iqbal", phone: "+92 300 2123456", orders: 5, spent: "28,500", status: "regular"},
+        {name: "Ayesha Khan", email: "ayesha.k@email.pk", area: "PECHS Block 2", phone: "+92 333 7182290", orders: 12, spent: "64,200", status: "vip"},
+        {name: "Mariam Siddiqui", email: "m.sid@email.pk", area: "North Nazimabad", phone: "+92 345 8821094", orders: 2, spent: "12,400", status: "new"},
+        {name: "Sara Junaid", email: "sara.j@email.pk", area: "Bahria Town", phone: "+92 300 9283312", orders: 18, spent: "115,000", status: "vip"},
+        {name: "Nadia Gul", email: "nadia.g@email.pk", area: "DHA Phase 8", phone: "+92 321 4455667", orders: 9, spent: "48,900", status: "regular"},
+        {name: "Kiran Shah", email: "kiran.s@email.pk", area: "Malir Cantt", phone: "+92 300 1122334", orders: 1, spent: "6,500", status: "new"},
+        {name: "Amna Sheikh", email: "amna.s@email.pk", area: "KDA Scheme 1", phone: "+92 333 5566778", orders: 11, spent: "59,000", status: "vip"},
+        {name: "Fatima Zahra", email: "fatima.z@email.pk", area: "Gulistan-e-Iqbal", phone: "+92 345 9988776", orders: 6, spent: "32,100", status: "regular"}
+    ];
+
+    function renderRows(filter = 'all') {
+        const tbody = document.getElementById('customer-list');
+        let html = '';
+        for (let i = 0; i < 45; i++) {
+            const d = customerData[i % customerData.length];
+            if (filter !== 'all' && d.status !== filter) continue;
+
+            html += `
+                <tr class="animate__animated animate__fadeInUp" style="animation-delay: ${i * 0.01}s">
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-circle" style="background:#000">${d.name.charAt(0)}</div>
+                            <div class="fw-bold">${d.name}</div>
+                        </div>
+                    </td>
+                    <td><div class="small">${d.email}</div><div class="text-muted" style="font-size:0.7rem">${d.phone}</div></td>
+                    <td class="small text-muted">${d.area}</td>
+                    <td><span class="status-pill status-${d.status}">${d.status}</span></td>
+                    <td class="fw-bold">${d.orders} Orders</td>
+                    <td class="text-end fw-bold">Rs. ${d.spent}</td>
+                    <td class="text-center"><button class="btn btn-sm btn-outline-dark border-0"><i class="bi bi-three-dots"></i></button></td>
+                </tr>
+            `;
+        }
+        tbody.innerHTML = html;
+    }
+
+    function applyFilter(type, el) {
+        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        renderRows(type);
+    }
+
+    function searchTable() {
+        const val = document.getElementById('custSearch').value.toLowerCase();
+        const rows = document.querySelectorAll('#customer-list tr');
+        rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(val) ? '' : 'none');
+    }
+
+    renderRows();
+</script>
+</body>
+</html>

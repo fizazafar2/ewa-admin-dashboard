@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EWA | Products Inventory</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        :root {
+            --sidebar-bg: #000000;
+            --main-bg: #f8f8f8;
+            --text-gray-light: #b0b0b0;
+            --nav-item-active-bg: #ffffff;
+            --nav-item-active-text: #000000;
+            --transition-smooth: all 0.5s cubic-bezier(0.3, 1.5, 0.5, 1); 
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--main-bg); 
+            margin: 0; 
+            overflow-x: hidden; 
+            color: #000000;
+        }
+
+        #wrapper { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar (Original Fixed) --- */
+        #sidebar-wrapper { 
+            min-width: 260px; 
+            max-width: 260px;
+            background: var(--sidebar-bg); 
+            color: #ffffff; 
+            display: flex; 
+            flex-direction: column; 
+            transition: var(--transition-smooth);
+            z-index: 1100;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-heading { padding: 2.5rem 1.5rem; text-align: center; }
+        .sidebar-heading h2 { 
+            font-weight: 800; letter-spacing: 4px; margin: 0;
+            background: linear-gradient(to right, #ffffff, #808080);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; font-size: 2rem;
+        }
+        .sidebar-heading small {
+            display: block; color: var(--text-gray-light); letter-spacing: 2px; 
+            font-size: 0.65rem; margin-top: 5px; text-transform: uppercase;
+        }
+
+        .nav-item { 
+            display: flex; align-items: center; padding: 12px 22px; 
+            color: var(--text-gray-light); text-decoration: none; 
+            font-weight: 500; font-size: 0.9rem; margin: 4px 15px;
+            border-radius: 12px; transition: var(--transition-smooth);
+        }
+        .nav-item i { margin-right: 14px; font-size: 1.15rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #ffffff; transform: translateX(5px); }
+        .nav-item.active { background: var(--nav-item-active-bg); color: var(--nav-item-active-text); font-weight: 600; }
+
+        .btn-support {
+            background: #ffffff; color: #000000; border: none; font-weight: 700;
+            border-radius: 10px; padding: 10px; text-transform: uppercase;
+            font-size: 0.75rem; letter-spacing: 1px;
+        }
+
+        /* --- Navbar (Original Fixed) --- */
+        #page-content-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .navbar { 
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.9rem 1.8rem;
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.5); padding: 7px 16px;
+            border-radius: 50px; border: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+
+        /* --- Product Cards --- */
+        .product-card {
+            background: #fff; border-radius: 20px; border: 1px solid #efefef;
+            transition: 0.3s; height: 100%; overflow: hidden; position: relative;
+        }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        .product-thumb {
+            height: 280px; 
+            background: #f0f0f0; display: flex; align-items: center;
+            justify-content: center; overflow: hidden;
+        }
+        .product-thumb img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .product-card:hover .product-thumb img { transform: scale(1.08); }
+
+        .stock-badge {
+            position: absolute; top: 12px; right: 12px; font-size: 0.6rem;
+            font-weight: 800; padding: 4px 10px; border-radius: 50px; text-transform: uppercase;
+            z-index: 5;
+        }
+        .st-in { background: #e7f6ec; color: #008a2e; }
+        .st-low { background: #fbeae9; color: #bf1d08; }
+
+        .prod-cat { font-size: 0.65rem; color: #999; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+        .prod-name { font-size: 0.9rem; font-weight: 700; margin: 5px 0; color: #000; }
+        .prod-price { font-size: 1rem; font-weight: 800; color: #000; }
+
+        @media (max-width: 992px) {
+            #sidebar-wrapper { position: fixed; left: -260px; height: 100vh; }
+            #wrapper.toggled #sidebar-wrapper { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <h2>EWA</h2>
+            <small>BY FIZA ZAFAR</small>
+        </div>
+        <div class="px-2 mt-1 flex-grow-1">
+            <a href="index.html" class="nav-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+            <a href="Product.html" class="nav-item active"><i class="bi bi-bag"></i><span>Products</span></a>
+            <a href="Orders.html" class="nav-item"><i class="bi bi-cart"></i><span>Orders</span></a>
+            <a href="Costumers.html" class="nav-item"><i class="bi bi-people"></i><span>Customers</span></a>
+            <a href="Analytics.html" class="nav-item"><i class="bi bi-graph-up"></i><span>Analytics</span></a>
+            <hr class="mx-4 my-2" style="border-color: rgba(255,255,255,0.1); opacity: 0.5;">
+        </div>
+        <div class="p-4 mt-auto">
+            <button class="btn btn-support w-100">Support</button>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container-fluid px-0">
+                <button class="btn d-lg-none" onclick="document.getElementById('wrapper').classList.toggle('toggled')">
+                    <i class="bi bi-justify-left fs-3 text-dark"></i>
+                </button>
+                <span class="fw-bold text-uppercase d-none d-md-block" style="font-size: 0.85rem; letter-spacing: 1.5px;">Control Panel</span>
+                <div class="ms-auto d-flex align-items-center gap-4">
+                    <i class="bi bi-search text-dark" style="cursor:pointer"></i>
+                    <i class="bi bi-bell text-dark" style="cursor:pointer"></i>
+                    <div class="user-profile">
+                        <div class="text-end d-none d-sm-block">
+                            <div class="fw-bold small lh-1">Fiza Zafar</div>
+                            <small class="text-muted" style="font-size: 0.65rem;">Managing Director</small>
+                        </div>
+                        <i class="bi bi-person-circle fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+                <h2 class="fw-bold m-0">Inventory Catalog</h2>
+                <button class="btn btn-dark px-4 rounded-pill fw-bold btn-sm">ADD NEW</button>
+            </div>
+
+            <div class="row g-4" id="products-grid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        const grid = document.getElementById('products-grid');
+        
+        // Product Categories
+        const cats = ["3pc Formal Silk", "2pc Luxury Pret", "Stitched Lawn", "Festive Chiffon", "EWA Essentials"];
+        
+        // EWA Collection Specific Names (No other brands)
+        const collections = [
+            "EWA Noor-e-Jahan", "EWA Velvet Muse", "Zari Silk Luxe", "EWA Bloom Festive",
+            "Ivory Grace", "Midnight Shimmer", "Lawn Majesty", "EWA Heritage Gold"
+        ];
+
+        let html = '';
+
+        // Generate 36 products
+        for(let i=1; i<=36; i++) {
+            const category = cats[(i-1) % cats.length];
+            const collectionName = collections[(i-1) % collections.length];
+            const name = collectionName + " Vol. " + i; 
+            const price = (7200 + (i * 120)).toLocaleString();
+            const isLow = i % 9 === 0;
+
+            html += `
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2 animate__animated animate__fadeInUp" style="animation-delay: ${i * 0.01}s">
+                    <div class="product-card">
+                        <span class="stock-badge ${isLow ? 'st-low' : 'st-in'}">${isLow ? 'Low Stock' : 'In Stock'}</span>
+                        <div class="product-thumb">
+                            <img src="${i}.jpg" alt="${name}" 
+                                 onerror="this.src='https://via.placeholder.com/400x560.png?text=EWA+Collection'">
+                        </div>
+                        <div class="p-3">
+                            <div class="prod-cat">${category}</div>
+                            <div class="prod-name text-truncate">${name}</div>
+                            <div class="prod-price">Rs. ${price}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        grid.innerHTML = html;
+    };
+</script>
+
+</body>
+</html>

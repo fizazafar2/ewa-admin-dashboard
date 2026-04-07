@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EWA | Order Management</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        :root {
+            --sidebar-bg: #000000;
+            --main-bg: #f8f8f8;
+            --text-gray-light: #b0b0b0;
+            --nav-item-active-bg: #ffffff;
+            --nav-item-active-text: #000000;
+            --transition-smooth: all 0.5s cubic-bezier(0.3, 1.5, 0.5, 1); 
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--main-bg); margin: 0; overflow-x: hidden; color: #000000; }
+        #wrapper { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar (STRICTLY ORIGINAL) --- */
+        #sidebar-wrapper { 
+            min-width: 260px; max-width: 260px; background: var(--sidebar-bg); 
+            color: #ffffff; display: flex; flex-direction: column; 
+            transition: var(--transition-smooth); z-index: 1100;
+        }
+        .sidebar-heading { padding: 2.5rem 1.5rem; text-align: center; }
+        .sidebar-heading h2 { 
+            font-weight: 800; letter-spacing: 4px; margin: 0; font-size: 2rem;
+            background: linear-gradient(to right, #ffffff, #808080);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .sidebar-heading small { display: block; color: var(--text-gray-light); letter-spacing: 2px; font-size: 0.65rem; margin-top: 5px; text-transform: uppercase; }
+        
+        .nav-item { 
+            display: flex; align-items: center; padding: 12px 22px; color: var(--text-gray-light); 
+            text-decoration: none; font-weight: 500; font-size: 0.9rem; margin: 4px 15px; border-radius: 12px; transition: var(--transition-smooth);
+        }
+        .nav-item i { margin-right: 14px; font-size: 1.15rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #ffffff; transform: translateX(5px); }
+        .nav-item.active { background: var(--nav-item-active-bg); color: var(--nav-item-active-text); font-weight: 600; }
+        .btn-support { background: #ffffff; color: #000000; border: none; font-weight: 700; border-radius: 10px; padding: 10px; text-transform: uppercase; font-size: 0.75rem; }
+
+        /* --- Navbar (RESTORED TO DASHBOARD STYLE) --- */
+        #page-content-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .navbar { 
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.9rem 1.8rem;
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.5); padding: 7px 16px;
+            border-radius: 50px; border: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+
+        /* --- Filter Tabs Design --- */
+        .filter-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .filter-btn { 
+            background: #fff; border: 1px solid #eee; padding: 8px 18px; 
+            border-radius: 10px; font-size: 0.8rem; font-weight: 600; 
+            transition: all 0.3s; color: #666;
+        }
+        .filter-btn.active { background: #000; color: #fff; border-color: #000; }
+        .filter-btn:hover:not(.active) { background: #f0f0f0; }
+
+        /* --- Orders Page Content --- */
+        .order-table-card { background: #fff; border-radius: 20px; border: 1px solid #eee; overflow: hidden; }
+        
+        .badge-ewa { padding: 6px 14px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .bg-pending { background: #fff4e5; color: #b76e00; }
+        .bg-shipped { background: #e1f5fe; color: #0288d1; }
+        .bg-delivered { background: #e7f6ec; color: #008a2e; }
+        .bg-cancelled { background: #fbeae9; color: #bf1d08; }
+
+        .customer-info { display: flex; align-items: center; gap: 10px; }
+        .avatar-sm { width: 32px; height: 32px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+
+        .table thead th { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #999; border-bottom: 2px solid #f8f8f8; padding: 15px 20px; }
+        .table tbody td { padding: 18px 20px; font-size: 0.85rem; vertical-align: middle; border-bottom: 1px solid #f8f8f8; }
+
+        .search-box { background: #f0f0f0; border-radius: 10px; border: none; padding: 10px 20px; font-size: 0.85rem; width: 300px; }
+
+        @media (max-width: 992px) {
+            #sidebar-wrapper { position: fixed; left: -260px; height: 100vh; }
+            #wrapper.toggled #sidebar-wrapper { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <h2>EWA</h2>
+            <small>BY FIZA ZAFAR</small>
+        </div>
+        <div class="px-2 mt-1 flex-grow-1">
+            <a href="index.html" class="nav-item"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+            <a href="Product.html" class="nav-item"><i class="bi bi-bag"></i><span>Products</span></a>
+            <a href="Orders.html" class="nav-item active"><i class="bi bi-cart"></i><span>Orders</span></a>
+            <a href="Costumers.html" class="nav-item"><i class="bi bi-people"></i><span>Customers</span></a>
+            <a href="Analytics.html" class="nav-item"><i class="bi bi-graph-up"></i><span>Analytics</span></a>
+            <hr class="mx-4 my-2" style="border-color: rgba(255,255,255,0.1); opacity: 0.5;">
+        </div>
+        <div class="p-4 mt-auto">
+            <button class="btn btn-support w-100">Support</button>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container-fluid px-0">
+                <button class="btn d-lg-none" onclick="document.getElementById('wrapper').classList.toggle('toggled')">
+                    <i class="bi bi-justify-left fs-3 text-dark"></i>
+                </button>
+                <span class="fw-bold text-uppercase d-none d-md-block" style="font-size: 0.85rem; letter-spacing: 1.5px;">Sales Registry</span>
+                
+                <div class="ms-auto d-flex align-items-center gap-4">
+                    <i class="bi bi-search text-dark" style="cursor:pointer"></i>
+                    <i class="bi bi-bell text-dark" style="cursor:pointer"></i>
+                    <div class="user-profile">
+                        <div class="text-end d-none d-sm-block">
+                            <div class="fw-bold small lh-1">Fiza Zafar</div>
+                            <small class="text-muted" style="font-size: 0.65rem;">Managing Director</small>
+                        </div>
+                        <i class="bi bi-person-circle fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 animate__animated animate__fadeInDown">
+                <div>
+                    <h2 class="fw-bold m-0">Live Orders</h2>
+                    <p class="text-muted small">Tracking 35 active shipments for EWA Karachi</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <input type="text" id="orderSearch" class="search-box" placeholder="Search Order ID or City..." onkeyup="filterOrders()">
+                    <button class="btn btn-dark px-4 rounded-3 btn-sm fw-bold">EXPORT CSV</button>
+                </div>
+            </div>
+
+            <div class="filter-tabs animate__animated animate__fadeIn">
+                <button class="filter-btn active" onclick="setStatusFilter('all', this)">All Orders</button>
+                <button class="filter-btn" onclick="setStatusFilter('pending', this)">Pending</button>
+                <button class="filter-btn" onclick="setStatusFilter('shipped', this)">Shipped</button>
+                <button class="filter-btn" onclick="setStatusFilter('delivered', this)">Delivered</button>
+            </div>
+
+            <div class="order-table-card animate__animated animate__fadeInUp">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Customer & Location</th>
+                                <th>Items</th>
+                                <th>Payment</th>
+                                <th class="text-end">Total Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-list">
+                             </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const customers = ["Sana Ahmed", "Zainab Malik", "Hina Pervez", "Ayesha Khan", "Mariam Siddiqui", "Sara Junaid"];
+    const locations = ["DHA Phase 6, Karachi", "Clifton Block 4, Karachi", "PECHS Block 2, Karachi", "Gulshan-e-Iqbal, Karachi", "North Nazimabad, Karachi", "Bahria Town, Karachi"];
+    const statuses = ["pending", "shipped", "delivered"];
+    const items = ["Luxury Lawn (3pc)", "Silk Pret Wear", "Embroidered Chiffon", "Cotton Kurti"];
+    const payments = ["COD (Cash on Delivery)", "Bank Transfer (HBL)", "JazzCash"];
+
+    let currentFilter = 'all';
+    let allOrders = [];
+
+    // Generate initial data
+    function generateOrders() {
+        allOrders = [];
+        for (let i = 1; i <= 35; i++) {
+            allOrders.push({
+                id: `#EWA-${5500 + i}`,
+                date: `March ${Math.floor(Math.random() * 20) + 1}, 2026`,
+                name: customers[Math.floor(Math.random() * customers.length)],
+                loc: locations[Math.floor(Math.random() * locations.length)],
+                stat: statuses[Math.floor(Math.random() * statuses.length)],
+                pay: payments[Math.floor(Math.random() * payments.length)],
+                price: (Math.floor(Math.random() * 18000) + 4500).toLocaleString(),
+                initials: ""
+            });
+            allOrders[i-1].initials = allOrders[i-1].name.charAt(0);
+        }
+        renderTable(allOrders);
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('orders-list');
+        tbody.innerHTML = data.map((order, index) => `
+            <tr class="animate__animated animate__fadeIn" style="animation-delay: ${index * 0.02}s">
+                <td class="fw-bold">${order.id}</td>
+                <td class="text-muted" style="font-size: 0.75rem;">${order.date}</td>
+                <td>
+                    <div class="customer-info">
+                        <div class="avatar-sm">${order.initials}</div>
+                        <div>
+                            <div class="fw-bold">${order.name}</div>
+                            <div class="text-muted small" style="font-size: 0.7rem;">${order.loc}</div>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="small">${items[Math.floor(Math.random() * items.length)]}</span></td>
+                <td><span class="small text-uppercase fw-bold" style="font-size: 0.65rem;">${order.pay}</span></td>
+                <td class="text-end fw-bold">Rs. ${order.price}</td>
+                <td><span class="badge-ewa bg-${order.stat}">${order.stat}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-dark border-0"><i class="bi bi-three-dots-vertical"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function setStatusFilter(status, btn) {
+        currentFilter = status;
+        
+        // UI Update
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        filterOrders();
+    }
+
+    function filterOrders() {
+        const searchTerm = document.getElementById('orderSearch').value.toLowerCase();
+        
+        const filtered = allOrders.filter(order => {
+            const matchesStatus = currentFilter === 'all' || order.stat === currentFilter;
+            const matchesSearch = order.id.toLowerCase().includes(searchTerm) || 
+                                order.name.toLowerCase().includes(searchTerm) ||
+                                order.loc.toLowerCase().includes(searchTerm);
+            return matchesStatus && matchesSearch;
+        });
+        
+        renderTable(filtered);
+    }
+
+    // Initialize
+    generateOrders();
+</script>
+
+</body>
+</html>
